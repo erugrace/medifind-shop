@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { FilterPanel } from "@/components/marketplace/FilterPanel";
 import { ProductCard } from "@/components/marketplace/ProductCard";
-import { CATEGORIES, PRODUCTS } from "@/lib/marketplace/data";
+import { CATEGORIES } from "@/lib/marketplace/data";
+import { useCatalog } from "@/hooks/use-catalog";
 import {
   DEFAULT_FILTERS,
   SORT_LABELS,
@@ -32,8 +33,12 @@ export const Route = createFileRoute("/")({
 });
 
 function Marketplace() {
+  const { products: allProducts, getSeller } = useCatalog();
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
-  const products = useMemo(() => applyFilters(PRODUCTS, filters), [filters]);
+  const products = useMemo(
+    () => applyFilters(allProducts, filters, getSeller),
+    [allProducts, filters, getSeller],
+  );
   const activeCount = countActiveFilters(filters);
 
   const toggleCategory = (id: CategoryId) => {
@@ -55,7 +60,7 @@ function Marketplace() {
         <div className="border-b bg-card px-4 py-6 md:px-8">
           <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Medical equipment, found faster.</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {PRODUCTS.length}+ products from verified medical suppliers, hospitals and official brand stores.
+            {allProducts.length}+ products from verified medical suppliers, hospitals and official brand stores.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {CATEGORIES.map((c) => (
