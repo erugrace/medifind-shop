@@ -1,5 +1,5 @@
 import { TOP_BRANDS, getSeller } from "./data";
-import { discountPct, type CategoryId, type Condition, type Product, type SellerType } from "./types";
+import { discountPct, type CategoryId, type Condition, type Product, type Seller, type SellerType } from "./types";
 
 export const PRICE_MAX = 600;
 
