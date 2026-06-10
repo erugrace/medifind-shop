@@ -41,18 +41,28 @@ export const analyzeMedicalRecord = createServerFn({ method: "POST" })
     const gateway = createLovableAiGatewayProvider(key);
 
     const instruction = `Analyze this medical record/document. Extract the patient's equipment-relevant needs and produce a structured equipment needs report.
-- "summary": 2-3 sentence plain-language summary of what the record shows (no PII like names or IDs).
-- "conditions": list of conditions/issues relevant to equipment needs.
-- "recommendations": equipment types that would help. For each give equipment name, reason, priority ("high", "medium", or "low"), and 1-3 short searchTerms (single words or short phrases like "blood pressure monitor", "walker") usable to find products.
-You are not diagnosing — only mapping documented findings to equipment categories.${data.notes ? `\n\nUser notes: ${data.notes}` : ""}`;
+You are not diagnosing — only mapping documented findings to equipment categories.${data.notes ? `\n\nUser notes: ${data.notes}` : ""}
+
+Respond with ONLY a valid JSON object (no markdown, no code fences) with EXACTLY this shape:
+{
+  "summary": "2-3 sentence plain-language summary of what the record shows (no PII like names or IDs)",
+  "conditions": ["condition or issue relevant to equipment needs", ...],
+  "recommendations": [
+    {
+      "equipment": "equipment type name",
+      "reason": "why it would help",
+      "priority": "high" | "medium" | "low",
+      "searchTerms": ["1-3 short search phrases like 'blood pressure monitor'"]
+    }
+  ]
+}`;
 
     const filePart = data.mediaType.startsWith("image/")
       ? ({ type: "image", image: data.fileDataUrl } as const)
       : ({ type: "file", data: data.fileDataUrl, mediaType: data.mediaType } as const);
 
-    const { output } = await generateText({
+    const { text } = await generateText({
       model: gateway("google/gemini-3-flash-preview"),
-      output: Output.object({ schema: ReportSchema }),
       messages: [
         {
           role: "user",
@@ -61,7 +71,21 @@ You are not diagnosing — only mapping documented findings to equipment categor
       ],
     });
 
-    return output as RecordReport;
+    const cleaned = text.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "").trim();
+    const start = cleaned.indexOf("{");
+    const end = cleaned.lastIndexOf("}");
+    if (start === -1 || end === -1) throw new Error("The AI returned an unexpected response. Please try again.");
+
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(cleaned.slice(start, end + 1));
+    } catch {
+      throw new Error("The AI returned an unexpected response. Please try again.");
+    }
+
+    const result = ReportSchema.safeParse(parsed);
+    if (!result.success) throw new Error("The AI report was incomplete. Please try again.");
+    return result.data;
   });
 
 const GuideInput = z.object({
