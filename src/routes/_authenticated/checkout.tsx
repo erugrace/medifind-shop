@@ -36,7 +36,7 @@ function CheckoutPage() {
     startedRef.current = true;
 
     let destroyed = false;
-    let checkout: { destroy: () => void } | null = null;
+    let checkoutInstance: { destroy: () => void; mount: (el: HTMLElement) => void } | null = null;
 
     (async () => {
       try {
@@ -51,7 +51,8 @@ function CheckoutPage() {
         const stripe = await loadStripe(publishableKey);
         if (!stripe) throw new Error("Could not load the payment form.");
         if (destroyed) return;
-        checkout = await stripe.initEmbeddedCheckout({ clientSecret });
+        const checkout = await stripe.createEmbeddedCheckoutPage({ clientSecret });
+        checkoutInstance = checkout;
         if (destroyed) {
           checkout.destroy();
           return;
