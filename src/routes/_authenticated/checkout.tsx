@@ -69,7 +69,7 @@ function CheckoutPage() {
 
     return () => {
       destroyed = true;
-      checkout?.destroy();
+      checkoutInstance?.destroy();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
