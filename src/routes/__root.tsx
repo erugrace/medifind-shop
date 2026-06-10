@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 import { LogIn, LogOut, Package, ShoppingCart, UserRound } from "lucide-react";
 
 import appCss from "../styles.css?url";
+import appIcon from "../assets/app-icon.png";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";

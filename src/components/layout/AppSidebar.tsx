@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Bot, MapPin, Package, ShoppingCart, Sparkles, Store, Stethoscope, Search } from "lucide-react";
+import { Bot, MapPin, Package, ShoppingCart, Sparkles, Store, Search } from "lucide-react";
+import appIcon from "@/assets/app-icon.png";
 import {
   Sidebar,
   SidebarContent,
@@ -36,8 +37,8 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="px-3 py-4">
         <Link to="/" className="flex items-center gap-2">
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Stethoscope className="size-4" />
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-card border">
+            <img src={appIcon} alt="MediFind icon" width={28} height={28} loading="lazy" className="size-7 object-contain" />
           </span>
           {!collapsed && (
             <span className="font-display text-lg font-bold tracking-tight text-sidebar-foreground" style={{ fontFamily: "var(--font-display)" }}>
