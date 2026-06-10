@@ -1,10 +1,11 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { CreditCard, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { CATEGORY_IMAGES, getProduct } from "@/lib/marketplace/data";
+import { CATEGORY_IMAGES } from "@/lib/marketplace/data";
 import { useCart } from "@/hooks/use-cart";
-import { toast } from "sonner";
+import { useCatalog } from "@/hooks/use-catalog";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({
@@ -20,6 +21,9 @@ export const Route = createFileRoute("/cart")({
 
 function CartPage() {
   const { items, setQuantity, removeItem, subtotal, itemCount } = useCart();
+  const { getProduct } = useCatalog();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const shipping = subtotal > 50 || subtotal === 0 ? 0 : 6.99;
 
   if (items.length === 0) {
@@ -107,12 +111,18 @@ function CartPage() {
           <Button
             className="mt-5 w-full"
             size="lg"
-            onClick={() => toast.info("Secure checkout is coming in Phase 4 — Stripe payments will be enabled next.")}
+            onClick={() => {
+              if (!user) {
+                navigate({ to: "/auth", search: { redirect: "/checkout" } });
+                return;
+              }
+              navigate({ to: "/checkout" });
+            }}
           >
             <CreditCard className="size-4" /> Checkout
           </Button>
           <p className="mt-3 text-center text-xs text-muted-foreground">
-            Secure card payments and order tracking arrive in Phase 4.
+            Secure card payment with tax calculated at checkout.
           </p>
         </div>
       </div>

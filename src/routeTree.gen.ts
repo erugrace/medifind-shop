@@ -13,10 +13,16 @@ import { Route as SellRouteImport } from './routes/sell'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as BuyPhysicalRouteImport } from './routes/buy-physical'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AiToolRouteImport } from './routes/ai-tool'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductProductIdRouteImport } from './routes/product.$productId'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
+import { Route as AuthenticatedCheckoutReturnRouteImport } from './routes/_authenticated/checkout-return'
+import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const SellRoute = SellRouteImport.update({
   id: '/sell',
@@ -38,9 +44,18 @@ const BuyPhysicalRoute = BuyPhysicalRouteImport.update({
   path: '/buy-physical',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AiToolRoute = AiToolRouteImport.update({
   id: '/ai-tool',
   path: '/ai-tool',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -58,80 +73,137 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCheckoutReturnRoute =
+  AuthenticatedCheckoutReturnRouteImport.update({
+    id: '/checkout-return',
+    path: '/checkout-return',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCheckoutRoute = AuthenticatedCheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ai-tool': typeof AiToolRoute
+  '/auth': typeof AuthRoute
   '/buy-physical': typeof BuyPhysicalRoute
   '/cart': typeof CartRoute
   '/chat': typeof ChatRoute
   '/sell': typeof SellRoute
+  '/checkout': typeof AuthenticatedCheckoutRoute
+  '/checkout-return': typeof AuthenticatedCheckoutReturnRoute
+  '/orders': typeof AuthenticatedOrdersRoute
   '/api/chat': typeof ApiChatRoute
   '/product/$productId': typeof ProductProductIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai-tool': typeof AiToolRoute
+  '/auth': typeof AuthRoute
   '/buy-physical': typeof BuyPhysicalRoute
   '/cart': typeof CartRoute
   '/chat': typeof ChatRoute
   '/sell': typeof SellRoute
+  '/checkout': typeof AuthenticatedCheckoutRoute
+  '/checkout-return': typeof AuthenticatedCheckoutReturnRoute
+  '/orders': typeof AuthenticatedOrdersRoute
   '/api/chat': typeof ApiChatRoute
   '/product/$productId': typeof ProductProductIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/ai-tool': typeof AiToolRoute
+  '/auth': typeof AuthRoute
   '/buy-physical': typeof BuyPhysicalRoute
   '/cart': typeof CartRoute
   '/chat': typeof ChatRoute
   '/sell': typeof SellRoute
+  '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
+  '/_authenticated/checkout-return': typeof AuthenticatedCheckoutReturnRoute
+  '/_authenticated/orders': typeof AuthenticatedOrdersRoute
   '/api/chat': typeof ApiChatRoute
   '/product/$productId': typeof ProductProductIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/ai-tool'
+    | '/auth'
     | '/buy-physical'
     | '/cart'
     | '/chat'
     | '/sell'
+    | '/checkout'
+    | '/checkout-return'
+    | '/orders'
     | '/api/chat'
     | '/product/$productId'
+    | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/ai-tool'
+    | '/auth'
     | '/buy-physical'
     | '/cart'
     | '/chat'
     | '/sell'
+    | '/checkout'
+    | '/checkout-return'
+    | '/orders'
     | '/api/chat'
     | '/product/$productId'
+    | '/api/public/payments/webhook'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/ai-tool'
+    | '/auth'
     | '/buy-physical'
     | '/cart'
     | '/chat'
     | '/sell'
+    | '/_authenticated/checkout'
+    | '/_authenticated/checkout-return'
+    | '/_authenticated/orders'
     | '/api/chat'
     | '/product/$productId'
+    | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AiToolRoute: typeof AiToolRoute
+  AuthRoute: typeof AuthRoute
   BuyPhysicalRoute: typeof BuyPhysicalRoute
   CartRoute: typeof CartRoute
   ChatRoute: typeof ChatRoute
   SellRoute: typeof SellRoute
   ApiChatRoute: typeof ApiChatRoute
   ProductProductIdRoute: typeof ProductProductIdRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -164,11 +236,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyPhysicalRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ai-tool': {
       id: '/ai-tool'
       path: '/ai-tool'
       fullPath: '/ai-tool'
       preLoaderRoute: typeof AiToolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -192,18 +278,64 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/orders': {
+      id: '/_authenticated/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof AuthenticatedOrdersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/checkout-return': {
+      id: '/_authenticated/checkout-return'
+      path: '/checkout-return'
+      fullPath: '/checkout-return'
+      preLoaderRoute: typeof AuthenticatedCheckoutReturnRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/checkout': {
+      id: '/_authenticated/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof AuthenticatedCheckoutRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
+  AuthenticatedCheckoutReturnRoute: typeof AuthenticatedCheckoutReturnRoute
+  AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
+  AuthenticatedCheckoutReturnRoute: AuthenticatedCheckoutReturnRoute,
+  AuthenticatedOrdersRoute: AuthenticatedOrdersRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AiToolRoute: AiToolRoute,
+  AuthRoute: AuthRoute,
   BuyPhysicalRoute: BuyPhysicalRoute,
   CartRoute: CartRoute,
   ChatRoute: ChatRoute,
   SellRoute: SellRoute,
   ApiChatRoute: ApiChatRoute,
   ProductProductIdRoute: ProductProductIdRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

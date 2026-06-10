@@ -8,14 +8,24 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
-import { ShoppingCart } from "lucide-react";
+import { LogIn, LogOut, Package, ShoppingCart, UserRound } from "lucide-react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { CartProvider, useCart } from "@/hooks/use-cart";
+import { AuthProvider, useAuth } from "@/hooks/use-auth";
+import { CatalogProvider } from "@/hooks/use-catalog";
 
 function NotFoundComponent() {
   return (
@@ -141,38 +151,85 @@ function HeaderCartButton() {
   );
 }
 
+function HeaderAccountButton() {
+  const { user, signOut } = useAuth();
+
+  if (!user) {
+    return (
+      <Link
+        to="/auth"
+        className="inline-flex h-9 items-center gap-1.5 rounded-lg border bg-card px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+      >
+        <LogIn className="size-4" /> Sign in
+      </Link>
+    );
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          className="inline-flex size-9 items-center justify-center rounded-lg border bg-card text-foreground transition-colors hover:bg-accent"
+          aria-label="Account menu"
+        >
+          <UserRound className="size-4" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-52">
+        <DropdownMenuLabel className="truncate text-xs font-normal text-muted-foreground">
+          {user.email}
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link to="/orders" className="flex items-center gap-2">
+            <Package className="size-4" /> My orders
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => void signOut()}>
+          <LogOut className="size-4" /> Sign out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <CartProvider>
-        <SidebarProvider>
-          <div className="flex min-h-screen w-full">
-            <AppSidebar />
-            <div className="flex min-w-0 flex-1 flex-col">
-              <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b bg-card/80 px-4 backdrop-blur">
-                <SidebarTrigger />
-                <Link
-                  to="/"
-                  className="text-base font-bold tracking-tight md:hidden"
-                  style={{ fontFamily: "var(--font-display)" }}
-                >
-                  MediFind
-                </Link>
-                <div className="ml-auto">
-                  <HeaderCartButton />
+      <AuthProvider>
+        <CatalogProvider>
+          <CartProvider>
+            <SidebarProvider>
+              <div className="flex min-h-screen w-full">
+                <AppSidebar />
+                <div className="flex min-w-0 flex-1 flex-col">
+                  <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b bg-card/80 px-4 backdrop-blur">
+                    <SidebarTrigger />
+                    <Link
+                      to="/"
+                      className="text-base font-bold tracking-tight md:hidden"
+                      style={{ fontFamily: "var(--font-display)" }}
+                    >
+                      MediFind
+                    </Link>
+                    <div className="ml-auto flex items-center gap-2">
+                      <HeaderCartButton />
+                      <HeaderAccountButton />
+                    </div>
+                  </header>
+                  <main className="flex-1">
+                    {/* Required: nested routes render here. */}
+                    <Outlet />
+                  </main>
                 </div>
-              </header>
-              <main className="flex-1">
-                {/* Required: nested routes render here. */}
-                <Outlet />
-              </main>
-            </div>
-          </div>
-          <Toaster position="bottom-right" />
-        </SidebarProvider>
-      </CartProvider>
+              </div>
+              <Toaster position="bottom-right" />
+            </SidebarProvider>
+          </CartProvider>
+        </CatalogProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

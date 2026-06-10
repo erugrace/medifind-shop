@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Bot, MapPin, ShoppingCart, Sparkles, Store, Stethoscope, Search } from "lucide-react";
+import { Bot, MapPin, Package, ShoppingCart, Sparkles, Store, Stethoscope, Search } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -21,6 +21,7 @@ const items = [
   { title: "Ask Chatbot", url: "/chat", icon: Bot },
   { title: "Buy Physical", url: "/buy-physical", icon: MapPin },
   { title: "Cart", url: "/cart", icon: ShoppingCart },
+  { title: "My Orders", url: "/orders", icon: Package },
   { title: "AI Tool", url: "/ai-tool", icon: Sparkles },
   { title: "Sell", url: "/sell", icon: Store },
 ];

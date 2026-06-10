@@ -14,16 +14,280 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      order_items: {
+        Row: {
+          brand: string
+          category_id: string
+          created_at: string
+          id: string
+          order_id: string
+          product_id: string | null
+          product_name: string
+          quantity: number
+          unit_price: number
+        }
+        Insert: {
+          brand?: string
+          category_id?: string
+          created_at?: string
+          id?: string
+          order_id: string
+          product_id?: string | null
+          product_name: string
+          quantity?: number
+          unit_price: number
+        }
+        Update: {
+          brand?: string
+          category_id?: string
+          created_at?: string
+          id?: string
+          order_id?: string
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string
+          currency: string
+          email: string | null
+          id: string
+          payment_session_id: string | null
+          payment_status: string
+          shipping: number
+          status: Database["public"]["Enums"]["order_status"]
+          subtotal: number
+          total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          email?: string | null
+          id?: string
+          payment_session_id?: string | null
+          payment_status?: string
+          shipping?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          email?: string | null
+          id?: string
+          payment_session_id?: string | null
+          payment_status?: string
+          shipping?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          active: boolean
+          brand: string
+          bulk_pricing: boolean
+          bundle: boolean
+          category_id: string
+          clearance: boolean
+          condition: Database["public"]["Enums"]["product_condition"]
+          created_at: string
+          description: string
+          free_shipping: boolean
+          id: string
+          in_stock: boolean
+          limited_time: boolean
+          local_pickup: boolean
+          name: string
+          nearby_stores: boolean
+          original_price: number | null
+          price: number
+          rating: number
+          review_count: number
+          seller_id: string
+          ships_in_24h: boolean
+          subcategory: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          brand: string
+          bulk_pricing?: boolean
+          bundle?: boolean
+          category_id: string
+          clearance?: boolean
+          condition?: Database["public"]["Enums"]["product_condition"]
+          created_at?: string
+          description?: string
+          free_shipping?: boolean
+          id?: string
+          in_stock?: boolean
+          limited_time?: boolean
+          local_pickup?: boolean
+          name: string
+          nearby_stores?: boolean
+          original_price?: number | null
+          price: number
+          rating?: number
+          review_count?: number
+          seller_id: string
+          ships_in_24h?: boolean
+          subcategory?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          brand?: string
+          bulk_pricing?: boolean
+          bundle?: boolean
+          category_id?: string
+          clearance?: boolean
+          condition?: Database["public"]["Enums"]["product_condition"]
+          created_at?: string
+          description?: string
+          free_shipping?: boolean
+          id?: string
+          in_stock?: boolean
+          limited_time?: boolean
+          local_pickup?: boolean
+          name?: string
+          nearby_stores?: boolean
+          original_price?: number | null
+          price?: number
+          rating?: number
+          review_count?: number
+          seller_id?: string
+          ships_in_24h?: boolean
+          subcategory?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sellers: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          rating: number
+          type: Database["public"]["Enums"]["seller_type"]
+          updated_at: string
+          user_id: string | null
+          verified: boolean
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          rating?: number
+          type?: Database["public"]["Enums"]["seller_type"]
+          updated_at?: string
+          user_id?: string | null
+          verified?: boolean
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          rating?: number
+          type?: Database["public"]["Enums"]["seller_type"]
+          updated_at?: string
+          user_id?: string | null
+          verified?: boolean
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "seller" | "user"
+      order_status: "placed" | "confirmed" | "shipped" | "delivered"
+      product_condition: "new" | "refurbished" | "used"
+      seller_type: "individual" | "certified" | "hospital" | "brand"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +414,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "seller", "user"],
+      order_status: ["placed", "confirmed", "shipped", "delivered"],
+      product_condition: ["new", "refurbished", "used"],
+      seller_type: ["individual", "certified", "hospital", "brand"],
+    },
   },
 } as const
