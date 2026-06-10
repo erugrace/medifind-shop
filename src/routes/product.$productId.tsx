@@ -6,14 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { RatingStars } from "@/components/marketplace/RatingStars";
 import { ProductCard } from "@/components/marketplace/ProductCard";
-import { CATEGORY_IMAGES, PRODUCTS, getCategory, getProduct, getSeller } from "@/lib/marketplace/data";
+import { CATEGORY_IMAGES, getCategory, getProduct as getStaticProduct } from "@/lib/marketplace/data";
 import { CONDITION_LABELS, SELLER_TYPE_LABELS, discountPct } from "@/lib/marketplace/types";
 import { useCart } from "@/hooks/use-cart";
+import { useCatalog } from "@/hooks/use-catalog";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/product/$productId")({
   head: ({ params }) => {
-    const product = getProduct(params.productId);
+    const product = getStaticProduct(params.productId);
     const title = product ? `${product.name} — MediFind` : "Product — MediFind";
     const description = product?.description ?? "Medical equipment product details.";
     return {
@@ -45,16 +46,20 @@ function ProductNotFound() {
 
 function ProductDetail() {
   const { productId } = Route.useParams();
+  const { products, getProduct, getSeller, isLoading } = useCatalog();
   const product = getProduct(productId);
   const { addItem } = useCart();
   const [qty, setQty] = useState(1);
 
-  if (!product) return <ProductNotFound />;
+  if (!product) {
+    if (isLoading) return null;
+    return <ProductNotFound />;
+  }
 
   const seller = getSeller(product.sellerId);
   const category = getCategory(product.categoryId);
   const pct = discountPct(product);
-  const related = PRODUCTS.filter((p) => p.categoryId === product.categoryId && p.id !== product.id).slice(0, 4);
+  const related = products.filter((p) => p.categoryId === product.categoryId && p.id !== product.id).slice(0, 4);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 md:px-8">
