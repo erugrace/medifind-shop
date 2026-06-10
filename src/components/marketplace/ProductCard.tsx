@@ -3,12 +3,14 @@ import { BadgeCheck, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RatingStars } from "./RatingStars";
-import { CATEGORY_IMAGES, getSeller } from "@/lib/marketplace/data";
+import { CATEGORY_IMAGES } from "@/lib/marketplace/data";
 import { discountPct, SELLER_TYPE_LABELS, type Product } from "@/lib/marketplace/types";
 import { useCart } from "@/hooks/use-cart";
+import { useCatalog } from "@/hooks/use-catalog";
 import { toast } from "sonner";
 
 export function ProductCard({ product }: { product: Product }) {
+  const { getSeller } = useCatalog();
   const seller = getSeller(product.sellerId);
   const pct = discountPct(product);
   const { addItem } = useCart();

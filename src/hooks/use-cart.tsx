@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { getProduct } from "@/lib/marketplace/data";
+import { useCatalog } from "@/hooks/use-catalog";
 
 export interface CartItem {
   productId: string;
@@ -21,6 +21,7 @@ const CartContext = createContext<CartContextValue | null>(null);
 const STORAGE_KEY = "medifind-cart";
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const { getProduct } = useCatalog();
   const [items, setItems] = useState<CartItem[]>([]);
   const [loaded, setLoaded] = useState(false);
 
@@ -71,7 +72,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       total += product.price * i.quantity;
     }
     return { itemCount: count, subtotal: total };
-  }, [items]);
+  }, [items, getProduct]);
 
   const value = useMemo(
     () => ({ items, addItem, removeItem, setQuantity, clear, itemCount, subtotal }),

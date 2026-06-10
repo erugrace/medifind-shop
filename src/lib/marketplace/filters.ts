@@ -92,7 +92,11 @@ export function countActiveFilters(f: FilterState): number {
   return c;
 }
 
-export function applyFilters(products: Product[], f: FilterState): Product[] {
+export function applyFilters(
+  products: Product[],
+  f: FilterState,
+  getSellerFn: (id: string) => Seller | undefined = getSeller,
+): Product[] {
   const search = f.search.trim().toLowerCase();
   let result = products.filter((p) => {
     if (search) {
@@ -124,7 +128,7 @@ export function applyFilters(products: Product[], f: FilterState): Product[] {
     if (f.shipsIn24h && !p.shipsIn24h) return false;
     if (f.localPickup && !p.localPickup) return false;
     if (f.nearbyStores && !p.nearbyStores) return false;
-    const seller = getSeller(p.sellerId);
+    const seller = getSellerFn(p.sellerId);
     if (f.sellerTypes.length > 0 && (!seller || !f.sellerTypes.includes(seller.type))) return false;
     if (f.verifiedSellersOnly && (!seller || !seller.verified)) return false;
     if (f.conditions.length > 0 && !f.conditions.includes(p.condition)) return false;
