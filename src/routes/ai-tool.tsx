@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Sparkles } from "lucide-react";
-import { ComingSoon } from "@/components/layout/ComingSoon";
+import { FileSearch, BookOpenText } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RecordAnalyzer } from "@/components/ai-tool/RecordAnalyzer";
+import { UsageGuideTool } from "@/components/ai-tool/UsageGuideTool";
 
 export const Route = createFileRoute("/ai-tool")({
   head: () => ({
@@ -16,15 +18,36 @@ export const Route = createFileRoute("/ai-tool")({
 
 function AiToolPage() {
   return (
-    <ComingSoon
-      icon={Sparkles}
-      phase="Coming in Phase 2"
-      title="AI Tool"
-      description="Two powerful standalone AI tools in one place."
-      bullets={[
-        "Medical Record Analyzer — upload records and get a structured equipment needs report with product links",
-        "Equipment Usage Guide — pick a device and get step-by-step usage instructions and safety tips",
-      ]}
-    />
+    <div className="mx-auto max-w-3xl px-4 py-8">
+      <div className="mb-6 space-y-1.5">
+        <h1 className="font-heading text-2xl font-bold">AI Tool</h1>
+        <p className="text-sm text-muted-foreground">
+          Two standalone AI tools: turn medical records into an equipment needs report, or get a usage guide for any device.
+        </p>
+      </div>
+
+      <Tabs defaultValue="analyzer">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="analyzer" className="gap-2">
+            <FileSearch className="h-4 w-4" />
+            Record Analyzer
+          </TabsTrigger>
+          <TabsTrigger value="guide" className="gap-2">
+            <BookOpenText className="h-4 w-4" />
+            Usage Guide
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="analyzer" className="mt-6">
+          <RecordAnalyzer />
+        </TabsContent>
+        <TabsContent value="guide" className="mt-6">
+          <UsageGuideTool />
+        </TabsContent>
+      </Tabs>
+
+      <p className="mt-8 text-center text-[11px] text-muted-foreground">
+        AI output is informational only and not a substitute for professional medical advice.
+      </p>
+    </div>
   );
 }
