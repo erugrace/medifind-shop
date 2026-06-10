@@ -8,9 +8,14 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { ShoppingCart } from "lucide-react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
+import { AppSidebar } from "@/components/layout/AppSidebar";
+import { CartProvider, useCart } from "@/hooks/use-cart";
 
 function NotFoundComponent() {
   return (
@@ -77,19 +82,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "MediFind — Medical Equipment Marketplace" },
+      { name: "description", content: "Find and buy medical equipment fast — for individuals, hospitals, physiotherapists and healthcare professionals." },
+      { name: "author", content: "MediFind" },
+      { property: "og:title", content: "MediFind — Medical Equipment Marketplace" },
+      { property: "og:description", content: "Find and buy medical equipment fast — for individuals, hospitals and healthcare professionals." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
+      },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap",
       },
     ],
   }),
@@ -113,13 +123,56 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function HeaderCartButton() {
+  const { itemCount } = useCart();
+  return (
+    <Link
+      to="/cart"
+      className="relative inline-flex size-9 items-center justify-center rounded-lg border bg-card text-foreground transition-colors hover:bg-accent"
+      aria-label="Cart"
+    >
+      <ShoppingCart className="size-4" />
+      {itemCount > 0 && (
+        <span className="absolute -right-1.5 -top-1.5 flex min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+          {itemCount}
+        </span>
+      )}
+    </Link>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <CartProvider>
+        <SidebarProvider>
+          <div className="flex min-h-screen w-full">
+            <AppSidebar />
+            <div className="flex min-w-0 flex-1 flex-col">
+              <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b bg-card/80 px-4 backdrop-blur">
+                <SidebarTrigger />
+                <Link
+                  to="/"
+                  className="text-base font-bold tracking-tight md:hidden"
+                  style={{ fontFamily: "var(--font-display)" }}
+                >
+                  MediFind
+                </Link>
+                <div className="ml-auto">
+                  <HeaderCartButton />
+                </div>
+              </header>
+              <main className="flex-1">
+                {/* Required: nested routes render here. */}
+                <Outlet />
+              </main>
+            </div>
+          </div>
+          <Toaster position="bottom-right" />
+        </SidebarProvider>
+      </CartProvider>
     </QueryClientProvider>
   );
 }
