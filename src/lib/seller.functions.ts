@@ -158,10 +158,22 @@ export const deleteProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ id: z.string().min(1).max(64) }).parse(input))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase.from("products").delete().eq("id", data.id);
+    const { data: seller } = await context.supabase
+      .from("sellers")
+      .select("id")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    if (!seller) throw new Error("No seller profile found.");
+
+    const { error, count } = await context.supabase
+      .from("products")
+      .delete({ count: "exact" })
+      .eq("id", data.id)
+      .eq("seller_id", seller.id);
     if (error) {
       console.error("Product delete failed", error);
       throw new Error("Could not delete the product.");
     }
+    if (!count || count === 0) throw new Error("Product not found or not owned by you.");
     return { ok: true };
   });
