@@ -29,6 +29,7 @@ const ReportSchema = z.object({
 export type RecordReport = z.infer<typeof ReportSchema>;
 
 export const analyzeMedicalRecord = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => AnalyzeInput.parse(input))
   .handler(async ({ data }) => {
     const key = process.env.LOVABLE_API_KEY;
