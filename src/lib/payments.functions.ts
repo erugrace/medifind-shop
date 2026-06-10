@@ -27,7 +27,7 @@ const CheckoutInput = z.object({
 });
 
 export const createCheckoutSession = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireSupabaseAuth, requireOrigin])
   .inputValidator((input: unknown) => CheckoutInput.parse(input))
   .handler(async ({ data, context }) => {
     const ids = data.items.map((i) => i.productId);
