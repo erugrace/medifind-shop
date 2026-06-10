@@ -99,7 +99,7 @@ function Marketplace() {
           </Sheet>
           <Select value={filters.sort} onValueChange={(v) => setFilters((f) => ({ ...f, sort: v as SortOption }))}>
             <SelectTrigger className="w-44 bg-card">
-              <SelectValue />
+              <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
               {Object.entries(SORT_LABELS).map(([value, label]) => (
