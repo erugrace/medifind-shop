@@ -102,6 +102,7 @@ export const searchNearbyStores = createServerFn({ method: "POST" })
   });
 
 export const geocodeAddress = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => GeocodeInput.parse(input))
   .handler(async ({ data }): Promise<{ lat: number; lng: number; label: string } | { error: string }> => {
     const { lovableKey, mapsKey } = requireKeys();
