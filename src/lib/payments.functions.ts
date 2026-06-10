@@ -1,10 +1,18 @@
-import { createServerFn } from "@tanstack/react-start";
+import { createServerFn, createMiddleware } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { stripeRequest, type StripeCheckoutSession } from "@/lib/stripe.server";
 
 const FREE_SHIPPING_THRESHOLD = 50;
 const SHIPPING_FEE = 6.99;
+
+const requireOrigin = createMiddleware({ type: "function" }).server(async ({ next }) => {
+  const request = getRequest();
+  const url = new URL(request.url);
+  const origin = `${url.protocol}//${url.host}`;
+  return next({ context: { origin } });
+});
 
 const CheckoutInput = z.object({
   items: z
@@ -16,7 +24,6 @@ const CheckoutInput = z.object({
     )
     .min(1)
     .max(50),
-  origin: z.string().url().max(300),
 });
 
 export const createCheckoutSession = createServerFn({ method: "POST" })
