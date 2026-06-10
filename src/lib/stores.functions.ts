@@ -37,6 +37,7 @@ function requireKeys() {
 }
 
 export const searchNearbyStores = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => SearchInput.parse(input))
   .handler(async ({ data }): Promise<{ stores: NearbyStore[]; error?: string }> => {
     const { lovableKey, mapsKey } = requireKeys();
