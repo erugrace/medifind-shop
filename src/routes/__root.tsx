@@ -8,14 +8,24 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
-import { ShoppingCart } from "lucide-react";
+import { LogIn, LogOut, Package, ShoppingCart, UserRound } from "lucide-react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { CartProvider, useCart } from "@/hooks/use-cart";
+import { AuthProvider, useAuth } from "@/hooks/use-auth";
+import { CatalogProvider } from "@/hooks/use-catalog";
 
 function NotFoundComponent() {
   return (
