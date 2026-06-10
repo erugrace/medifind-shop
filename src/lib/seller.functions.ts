@@ -87,7 +87,7 @@ export const registerSeller = createServerFn({ method: "POST" })
 
     const { data: seller, error } = await context.supabase
       .from("sellers")
-      .insert({ user_id: context.userId, name: data.name, type: data.type })
+      .insert({ user_id: context.userId, name: data.name, type: "individual", verified: false })
       .select("id")
       .single();
     if (error || !seller) {
