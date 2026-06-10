@@ -30,11 +30,7 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const env = new URL(request.url).searchParams.get("env") ?? "sandbox";
-        const secret =
-          env === "live"
-            ? (process.env.PAYMENTS_WEBHOOK_SECRET ?? process.env.PAYMENTS_LIVE_WEBHOOK_SECRET)
-            : process.env.PAYMENTS_SANDBOX_WEBHOOK_SECRET;
+        const secret = process.env.PAYMENTS_WEBHOOK_SECRET;
         if (!secret) return new Response("Webhook not configured", { status: 500 });
 
         const signature = request.headers.get("stripe-signature") ?? "";

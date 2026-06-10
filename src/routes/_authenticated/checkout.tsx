@@ -43,7 +43,6 @@ function CheckoutPage() {
         const { clientSecret } = await createSession({
           data: {
             items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
-            origin: window.location.origin,
           },
         });
         const publishableKey = import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN as string | undefined;

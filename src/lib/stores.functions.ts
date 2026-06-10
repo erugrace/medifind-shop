@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_maps";
 
@@ -36,6 +37,7 @@ function requireKeys() {
 }
 
 export const searchNearbyStores = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => SearchInput.parse(input))
   .handler(async ({ data }): Promise<{ stores: NearbyStore[]; error?: string }> => {
     const { lovableKey, mapsKey } = requireKeys();
@@ -100,6 +102,7 @@ export const searchNearbyStores = createServerFn({ method: "POST" })
   });
 
 export const geocodeAddress = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => GeocodeInput.parse(input))
   .handler(async ({ data }): Promise<{ lat: number; lng: number; label: string } | { error: string }> => {
     const { lovableKey, mapsKey } = requireKeys();

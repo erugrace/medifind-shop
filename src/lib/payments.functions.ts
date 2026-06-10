@@ -1,10 +1,18 @@
-import { createServerFn } from "@tanstack/react-start";
+import { createServerFn, createMiddleware } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { stripeRequest, type StripeCheckoutSession } from "@/lib/stripe.server";
 
 const FREE_SHIPPING_THRESHOLD = 50;
 const SHIPPING_FEE = 6.99;
+
+const requireOrigin = createMiddleware({ type: "function" }).server(async ({ next }) => {
+  const request = getRequest();
+  const url = new URL(request.url);
+  const origin = `${url.protocol}//${url.host}`;
+  return next({ context: { origin } });
+});
 
 const CheckoutInput = z.object({
   items: z
@@ -16,11 +24,10 @@ const CheckoutInput = z.object({
     )
     .min(1)
     .max(50),
-  origin: z.string().url().max(300),
 });
 
 export const createCheckoutSession = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireSupabaseAuth, requireOrigin])
   .inputValidator((input: unknown) => CheckoutInput.parse(input))
   .handler(async ({ data, context }) => {
     const ids = data.items.map((i) => i.productId);
@@ -84,7 +91,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     const params: Record<string, string> = {
       mode: "payment",
       ui_mode: "embedded_page",
-      return_url: `${data.origin}/checkout-return?session_id={CHECKOUT_SESSION_ID}`,
+      return_url: `${context.origin}/checkout-return?session_id={CHECKOUT_SESSION_ID}`,
       "metadata[order_id]": order.id,
     };
     lines.forEach((l, i) => {
