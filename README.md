@@ -6,7 +6,7 @@ The project explores how a traditional e-commerce experience can be adapted spec
 
 ## Live Demo
 
-MediFind can be viewed here:
+MediFind can be seen here:
 
 https://medifind-shop.lovable.app
 
